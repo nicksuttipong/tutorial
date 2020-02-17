@@ -1,0 +1,61 @@
+version: "2"
+
+services:
+  
+  workspace:
+    build: "./.docker"
+    depends_on:
+      - mariadb
+    links:
+      - mariadb:db
+      - memcached
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      ##PHP INI 
+      - ".docker/php.ini:/usr/local/etc/php/conf.d/php.ini"
+      ## STORAGE DATA
+      - "./public_html:/var/www/html"
+      - ".docker/conf.d:/etc/apache2/sites-enabled"
+      
+    networks:
+      - "backend"
+
+  mariadb:
+    build: "./.docker/mariadb"
+    restart: always
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci
+    environment:
+     - MYSQL_ROOT_PASSWORD=root
+     - MYSQL_DATABASE=unii_db
+    networks:
+      - "backend"
+    expose:
+      - "3306"
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - mariadb:db
+    environment:
+      - MYSQL_USERNAME=root
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - "backend"
+    ports: 
+      - "8888:80"
+
+  memcached:
+    image: memcached
+    networks:
+      - "backend"
+    ports:
+      - 11211:11211
+    environment:
+      - MEMCACHED_CACHE_SIZE=128
+
+networks:
+  backend:
+    driver: "bridge"
