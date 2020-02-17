@@ -1,4 +1,5 @@
 <?php
+  require_once('./notify.php');
   header('Content-type: application/json');
   $email = $_POST['email'];
   $comment = $_POST['comment'];
@@ -23,8 +24,12 @@
   $context  = stream_context_create($options);
   $response = json_decode(file_get_contents($url, false, $context),true);
   
-  if($responseKeys["success"]) {
-    echo json_encode(array('success' => 'true'));
+  if($response["success"]) {
+    // Token Notify
+    $token = "mICfTZAOB0E3O69DJM4B4KUQKvX6Znn2w0Did9Cfb4z";
+
+    $str = "มีการโพส Comment โดยมีข้อมูลดังนี้ $email $comment";
+    notify_message($str,$token);
   } else {
     echo json_encode(array('success' => 'false','response' => $response));
   }
