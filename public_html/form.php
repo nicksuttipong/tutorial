@@ -26,12 +26,13 @@
   
   if($response["success"]) {
     // Token Notify
-    $token = "mICfTZAOB0E3O69DJM4B4KUQKvX6Znn2w0Did9Cfb4z";
+    $token = "jBJB2D7Y83CcfUq5EijwoCmrkoYKu4hFvyJMC7mYhle";
 
     $str = "มีการโพส Comment โดยมีข้อมูลดังนี้ $email $comment";
     notify_message($str,$token);
+    echo json_encode(array('success' => true,'response' => ''));
   } else {
-    echo json_encode(array('success' => 'false','response' => $response));
+    echo json_encode(array('success' => false,'response' => $response));
   }
 ?>
 
